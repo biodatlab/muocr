@@ -109,10 +109,14 @@ class CERApp(QMainWindow):
         self.central_widget.setLayout(layout)
 
     def load_predictions(self):
-        filepath, _ = QFileDialog.getOpenFileName(self, "Open Predictions File", "", "CSV Files (*.csv)")
+        # Load CSV or Excel file
+        filepath, _ = QFileDialog.getOpenFileName(self, "Open Predictions File", "", "Spreadsheet Files (*.csv *.xlsx)")
         if filepath:
             self.pred_file_input.setText(filepath)
-            self.pred_data = pd.read_csv(filepath)
+            if filepath.endswith('.xlsx'):
+                self.pred_data = pd.read_excel(filepath)
+            else:
+                self.pred_data = pd.read_csv(filepath)
             # Load the columns into the comboboxes
             self.pred_sorting_column_dropdown.setEnabled(True)
             self.pred_sorting_column_dropdown.clear()
@@ -123,10 +127,13 @@ class CERApp(QMainWindow):
             self.display_data(self.pred_data, self.pred_table)
 
     def load_groundtruth(self):
-        filepath, _ = QFileDialog.getOpenFileName(self, "Open Groundtruth File", "", "CSV Files (*.csv)")
+        filepath, _ = QFileDialog.getOpenFileName(self, "Open Groundtruth File", "", "Spreadsheet Files (*.csv *.xlsx)")
         if filepath:
             self.gt_file_input.setText(filepath)
-            self.gt_data = pd.read_csv(filepath)
+            if filepath.endswith('.xlsx'):
+                self.gt_data = pd.read_excel(filepath)
+            else:
+                self.gt_data = pd.read_csv(filepath)
             # Load the columns into the comboboxes
             self.gt_sorting_column_dropdown.setEnabled(True)
             self.gt_sorting_column_dropdown.clear()
