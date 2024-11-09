@@ -52,3 +52,35 @@ def process_text(text: any) -> str:
     # Convert to string
     text = str(text)
     return text.lower().strip()
+
+def get_matched_columns(hypotheses_dataframe: pd.DataFrame, references_dataframe: pd.DataFrame) -> List[str]:
+    """
+    Get the matched columns' names from the two dataframes excluding the index column (the first column)
+    Args:
+        hypotheses_dataframe: pandas.DataFrame
+        references_dataframe: pandas.DataFrame
+    Returns:
+        matched_columns: list of strings
+    """
+    hypotheses_columns = hypotheses_dataframe.columns[1:]
+    references_columns = references_dataframe.columns[1:]
+    return list(set(hypotheses_columns).intersection(references_columns))
+
+def concatenate_columns(dataframe: pd.DataFrame, columns: List[str]) -> List[str]:
+    """
+    Concatenate the values of the columns in the dataframe and return as a list of string.
+    Args:
+        dataframe: pandas.DataFrame
+        columns: list of strings
+    Returns:
+        concatenated_values: list of strings
+    """
+    list_of_str_in_columns = []
+    for column in columns:
+        list_of_str_in_column = get_column_to_list(dataframe, column)
+        list_of_str_in_columns += list_of_str_in_column
+    return list_of_str_in_columns
+
+
+
+    

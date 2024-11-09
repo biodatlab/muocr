@@ -63,14 +63,14 @@ class CERApp(QMainWindow):
         sorting_column_layout.addWidget(self.pred_sorting_column_dropdown)
         sorting_column_layout.addWidget(self.gt_sorting_column_label)
         sorting_column_layout.addWidget(self.gt_sorting_column_dropdown)
-        layout.addLayout(sorting_column_layout)
+        # layout.addLayout(sorting_column_layout)
 
         # Buttons for Sorting
         sorting_button_layout = QHBoxLayout()
         self.sort_button = QPushButton("Sort by Specified Columns")
         self.sort_button.clicked.connect(self.sort_data)
         sorting_button_layout.addWidget(self.sort_button)
-        layout.addLayout(sorting_button_layout)
+        # layout.addLayout(sorting_button_layout)
 
         # Table Previews
         self.pred_table = QTableWidget()
@@ -95,7 +95,7 @@ class CERApp(QMainWindow):
         calculation_column_layout.addWidget(self.pred_calculation_column_dropdown)
         calculation_column_layout.addWidget(self.gt_calculation_column_label)
         calculation_column_layout.addWidget(self.gt_calculation_column_dropdown)
-        layout.addLayout(calculation_column_layout)
+        # layout.addLayout(calculation_column_layout)
 
         # Buttons for Calculation
         button_layout = QHBoxLayout()
@@ -113,6 +113,8 @@ class CERApp(QMainWindow):
         if filepath:
             self.pred_file_input.setText(filepath)
             self.pred_data = pd.read_csv(filepath)
+            # Automatically sort the data by the first column
+            self.pred_data = self.pred_data.sort_values(by=self.pred_data.columns[0])
             # Load the columns into the comboboxes
             self.pred_sorting_column_dropdown.setEnabled(True)
             self.pred_sorting_column_dropdown.clear()
@@ -162,19 +164,25 @@ class CERApp(QMainWindow):
 
     def calculate_cer(self):
         """Calculate the CER and display the result."""
-        pred_column = self.pred_calculation_column_dropdown.currentText()
-        gt_column = self.gt_calculation_column_dropdown.currentText()
+        # pred_column = self.pred_calculation_column_dropdown.currentText()
+        # gt_column = self.gt_calculation_column_dropdown.currentText()
 
         if not (hasattr(self, 'pred_data') and hasattr(self, 'gt_data')):
             self.result_label.setText("CER Result: Load both files first!")
             return
 
-        if pred_column not in self.pred_data.columns or gt_column not in self.gt_data.columns:
-            self.result_label.setText("CER Result: Invalid column names!")
-            return
+        matched_columns = cer.get_matched_columns(self.pred_data, self.gt_data)
+        # Check if any matched_column neither in pred_data nor in gt_data
 
-        predictions = cer.get_column_to_list(self.pred_data, pred_column)
-        groundtruth = cer.get_column_to_list(self.gt_data, gt_column)
+        # if pred_column not in self.pred_data.columns or gt_column not in self.gt_data.columns:
+        #     self.result_label.setText("CER Result: Invalid column names!")
+        #     return
+
+        predictions = cer.concatenate_columns(self.pred_data, matched_columns)
+        groundtruth = cer.concatenate_columns(self.gt_data, matched_columns)
+
+        # predictions = cer.get_column_to_list(self.pred_data, pred_column)
+        # groundtruth = cer.get_column_to_list(self.gt_data, gt_column)
 
         # Process each element in predictions and groundtruth
         predictions = [cer.process_text(pred) for pred in predictions]
