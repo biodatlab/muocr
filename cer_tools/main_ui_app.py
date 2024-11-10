@@ -184,11 +184,37 @@ class CERApp(QMainWindow):
 
         matched_columns = cer.get_matched_columns(self.pred_data, self.gt_data)
         # Check if any matched_column neither in pred_data nor in gt_data
+        if not matched_columns:
+            self.result_label.setText("CER Result: No matched columns!")
+            return
+        
+        result_texts = []
+        # Calculate CER for each matched column
+        for matched_column in matched_columns:
+            result_text = ""
+            predictions = cer.get_column_to_list(self.pred_data, matched_column)
+            groundtruth = cer.get_column_to_list(self.gt_data, matched_column)
+            # Process each element in predictions and groundtruth
+            predictions = [cer.process_text(pred) for pred in predictions]
+            groundtruth = [cer.process_text(gt) for gt in groundtruth]
+            # Ensure both lists have the same length
+            if len(predictions) != len(groundtruth):
+                result_text = f"{matched_column}: Mismatched row counts!"
+                pass
+            # Ensure that each element in predictions and groundtruth is a string
+            elif not all(isinstance(pred, str) for pred in predictions):
+                result_text = f"{matched_column}: All predictions should be strings!"
+                pass
+            elif not all(isinstance(gt, str) for gt in groundtruth):
+                result_text = f"{matched_column}: All groundtruth should be strings!"
+                pass
+            else:
+                # Calculate CER
+                cer_result = cer.cer(predictions, groundtruth)
+                result_text = f"{matched_column}: {cer_result:.4f}"
+            result_texts.append(result_text)
 
-        # if pred_column not in self.pred_data.columns or gt_column not in self.gt_data.columns:
-        #     self.result_label.setText("CER Result: Invalid column names!")
-        #     return
-
+        # Calculate CER for all matched columns
         predictions = cer.concatenate_columns(self.pred_data, matched_columns)
         groundtruth = cer.concatenate_columns(self.gt_data, matched_columns)
 
@@ -212,9 +238,10 @@ class CERApp(QMainWindow):
             self.result_label.setText("CER Result: All groundtruth should be strings!")
             return
 
-        # Calculate CER
+        # Calculate CER and display the overall result
         cer_result = cer.cer(predictions, groundtruth)
         self.result_label.setText(f"CER Result: {cer_result:.4f}")
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
