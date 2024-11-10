@@ -113,11 +113,11 @@ class CERApp(QMainWindow):
         filepath, _ = QFileDialog.getOpenFileName(self, "Open Predictions File", "", "Spreadsheet Files (*.csv *.xlsx)")
         if filepath:
             self.pred_file_input.setText(filepath)
-            if filepath.endswith('.xlsx'):
-                self.pred_data = pd.read_excel(filepath)
-            else:
-                self.pred_data = pd.read_csv(filepath)
-            self.pred_data = pd.read_csv(filepath)
+            with open(filepath, "rb") as f:
+                if filepath.endswith('.xlsx'):
+                    self.pred_data = pd.read_excel(f)
+                else:
+                    self.pred_data = pd.read_csv(f)
             # Automatically sort the data by the first column
             self.pred_data = self.pred_data.sort_values(by=self.pred_data.columns[0])
             # Load the columns into the comboboxes
@@ -133,10 +133,13 @@ class CERApp(QMainWindow):
         filepath, _ = QFileDialog.getOpenFileName(self, "Open Groundtruth File", "", "Spreadsheet Files (*.csv *.xlsx)")
         if filepath:
             self.gt_file_input.setText(filepath)
-            if filepath.endswith('.xlsx'):
-                self.gt_data = pd.read_excel(filepath)
-            else:
-                self.gt_data = pd.read_csv(filepath)
+            with open(filepath, "rb") as f:
+                if filepath.endswith('.xlsx'):
+                    self.gt_data = pd.read_excel(f)
+                else:
+                    self.gt_data = pd.read_csv(f)
+            # Automatically sort the data by the first column
+            self.gt_data = self.gt_data.sort_values(by=self.gt_data.columns[0])
             # Load the columns into the comboboxes
             self.gt_sorting_column_dropdown.setEnabled(True)
             self.gt_sorting_column_dropdown.clear()
