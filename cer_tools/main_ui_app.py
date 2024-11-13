@@ -118,6 +118,10 @@ class CERApp(QMainWindow):
                     self.pred_data = pd.read_excel(f)
                 else:
                     self.pred_data = pd.read_csv(f)
+            # Convert all columns to string
+            self.pred_data = self.pred_data.astype(str)
+            # Do not convert empty strings to NaN
+            self.pred_data = self.pred_data.fillna('')
             # Automatically sort the data by the first column
             self.pred_data = self.pred_data.sort_values(by=self.pred_data.columns[0])
             # Load the columns into the comboboxes
@@ -127,7 +131,9 @@ class CERApp(QMainWindow):
             self.pred_calculation_column_dropdown.setEnabled(True)
             self.pred_calculation_column_dropdown.clear()
             self.pred_calculation_column_dropdown.addItems(self.pred_data.columns)
-            self.display_data(self.pred_data, self.pred_table)
+            # replace "nan" with empty string
+            pred_data = self.pred_data.replace('nan', '')
+            self.display_data(pred_data, self.pred_table)
 
     def load_groundtruth(self):
         filepath, _ = QFileDialog.getOpenFileName(self, "Open Groundtruth File", "", "Spreadsheet Files (*.csv *.xlsx)")
@@ -138,6 +144,10 @@ class CERApp(QMainWindow):
                     self.gt_data = pd.read_excel(f)
                 else:
                     self.gt_data = pd.read_csv(f)
+            # Convert all columns to string
+            self.gt_data = self.gt_data.astype(str)
+            # Do not convert empty strings to NaN
+            self.gt_data = self.gt_data.fillna('')
             # Automatically sort the data by the first column
             self.gt_data = self.gt_data.sort_values(by=self.gt_data.columns[0])
             # Load the columns into the comboboxes
@@ -147,7 +157,9 @@ class CERApp(QMainWindow):
             self.gt_calculation_column_dropdown.setEnabled(True)
             self.gt_calculation_column_dropdown.clear()
             self.gt_calculation_column_dropdown.addItems(self.gt_data.columns)
-            self.display_data(self.gt_data, self.gt_table)
+            # replace "nan" with empty string
+            gt_data = self.gt_data.replace('nan', '')
+            self.display_data(gt_data, self.gt_table)
 
     def display_data(self, data, table_widget):
         """Display the top 5 rows of a DataFrame in a QTableWidget."""
