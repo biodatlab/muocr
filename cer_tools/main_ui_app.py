@@ -250,9 +250,9 @@ class CERApp(QMainWindow):
             self.result_label.setText("CER Result: All groundtruth should be strings!")
             return
 
-        # Calculate CER and display the overall result
+        # Calculate CER and display the overall result in percentage
         cer_result = cer.cer(predictions, groundtruth)
-        self.result_label.setText(f"CER Result: {cer_result:.4f}")
+        self.result_label.setText(f"CER Result: {cer_result*100.00:.2f}%")
 
 
 if __name__ == "__main__":
