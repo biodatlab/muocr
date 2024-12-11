@@ -70,7 +70,6 @@ class CERApp(QMainWindow):
         self.sort_button = QPushButton("Sort by Specified Columns")
         self.sort_button.clicked.connect(self.sort_data)
         sorting_button_layout.addWidget(self.sort_button)
-        # layout.addLayout(sorting_button_layout)
 
         # Table Previews
         self.pred_table = QTableWidget()
@@ -95,7 +94,6 @@ class CERApp(QMainWindow):
         calculation_column_layout.addWidget(self.pred_calculation_column_dropdown)
         calculation_column_layout.addWidget(self.gt_calculation_column_label)
         calculation_column_layout.addWidget(self.gt_calculation_column_dropdown)
-        # layout.addLayout(calculation_column_layout)
 
         # Buttons for Calculation
         button_layout = QHBoxLayout()
@@ -187,8 +185,6 @@ class CERApp(QMainWindow):
 
     def calculate_cer(self):
         """Calculate the CER and display the result."""
-        # pred_column = self.pred_calculation_column_dropdown.currentText()
-        # gt_column = self.gt_calculation_column_dropdown.currentText()
 
         if not (hasattr(self, 'pred_data') and hasattr(self, 'gt_data')):
             self.result_label.setText("CER Result: Load both files first!")
@@ -229,9 +225,6 @@ class CERApp(QMainWindow):
         # Calculate CER for all matched columns
         predictions = cer.concatenate_columns(self.pred_data, matched_columns)
         groundtruth = cer.concatenate_columns(self.gt_data, matched_columns)
-
-        # predictions = cer.get_column_to_list(self.pred_data, pred_column)
-        # groundtruth = cer.get_column_to_list(self.gt_data, gt_column)
 
         # Process each element in predictions and groundtruth
         predictions = [cer.process_text(pred) for pred in predictions]
