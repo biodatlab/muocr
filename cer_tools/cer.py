@@ -11,7 +11,24 @@ def cer(hypotheses: List[str], references: List[str]) -> float:
     Returns:
         cer: float
     """
-    return jiwer.cer(hypotheses, references)
+    # Filter out pairs where reference is empty string
+    filtered_hypotheses = []
+    filtered_references = []
+    
+    for hyp, ref in zip(hypotheses, references):
+        if ref.strip():  # Only include if reference is not empty or just whitespace
+            filtered_hypotheses.append(hyp)
+            filtered_references.append(ref)
+    
+    # If no valid pairs remain, return 1.0 (100% error rate)
+    if not filtered_references:
+        return 1.0
+    
+    # If all references are empty but we have hypotheses, calculate based on hypothesis length
+    if len(filtered_references) == 0 and any(hyp.strip() for hyp in hypotheses):
+        return 1.0
+    
+    return jiwer.cer(filtered_hypotheses, filtered_references)
 
 def read_file(file_path: str) -> pd.DataFrame:
     """

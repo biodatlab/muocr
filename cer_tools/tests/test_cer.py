@@ -19,6 +19,12 @@ class TestCer(unittest.TestCase):
         self.assertEqual(cer_score, 1.0)
         cer_score = cer.cer(['เลขที่ 84 หมู่ 14 ถนนพหลโยธิน ตำบลปากน้ำโพ อำเภอเมือง จังหวัดนครสวรรค์ 60000', 'เลขที่ 62 หมู่ 12 ถนนพหลโยธิน ตำบลเวียง อำเภอเมือง จังหวัดเชียงราย 57000'], ['เลขที่ 64 หมู่ 14 ถนนพหลโยธิน ตำบลปากน้ำโพ อำเภอเมือง จังหวัดนครสวรรค์ 60000', 'เลขที่ 62 หมู่ 12 ถนนพหลโยธิน ตำบลเวียง อำเภอเมือง จังหวัดเชียงราย 57000'])
         assert cer_score > 0.0
+        # Test for empty strings in references
+        cer_score = cer.cer(['hello', 'world'], ['hello', ''])
+        self.assertEqual(cer_score, 0.0)  # Should ignore the empty reference pair
+        # Test for all empty references
+        cer_score = cer.cer(['hello', 'world'], ['', ''])
+        self.assertEqual(cer_score, 1.0)  # Should return 100% error rate
 
     def test_read_file(self):
         df = cer.read_file('cer_tools/tests/test_data.csv')
