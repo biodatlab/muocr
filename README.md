@@ -59,7 +59,7 @@ CER = (0 + 2 + 0) / 11 = 0.182 = 18.2%
 1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd muocr-cer-tool
+cd muocr
 ```
 
 2. Create and activate the conda environment:
